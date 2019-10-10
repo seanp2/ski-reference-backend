@@ -3,6 +3,7 @@ package com.skireference.model.results;
 import com.skireference.util.Date;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public interface Race {
 	/**
@@ -20,6 +21,7 @@ public interface Race {
 	 */
 	ArrayList<RaceAthlete> getScorers();
 
+	public ArrayList<Integer> getScoringIndices();
 
 	/**
 	 * @return the venue at which the race was hosted
@@ -49,7 +51,10 @@ public interface Race {
 	 */
 	String asResultsCSV();
 
+	List<RaceAthlete> getDnfs();
 
+	String getEvent();
+	double getPenalty();
 	/**
 	 * Attack from the back is ski racing slang for the athlete
 	 * who made the biggest jump in rank from their starting position.

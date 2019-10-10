@@ -6,16 +6,16 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 
 @SpringBootApplication
-public class DemoApplication extends SpringBootServletInitializer {
+public class SkiReferenceRun extends SpringBootServletInitializer {
 	@Override
 	protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
-		return application.sources(DemoApplication.class);
+		return application.sources(SkiReferenceRun.class);
 	}
 
 	public static void main(String[] args) {
 
 		SpringApplication sa = new SpringApplication(
-				DemoApplication.class);
+				SkiReferenceRun.class);
 		sa.run(args);
 	}
 
