@@ -14,13 +14,14 @@ import java.util.List;
 @EnableAutoConfiguration
 @CrossOrigin
 public class Controller {
-	@RequestMapping("/")
-	public String index() {
-		return "Greetings from Spring Boot!";
+	@RequestMapping(value = "/results/{raceId}", method = RequestMethod.GET)
+	public Race getRace(@PathVariable("raceId") int raceId) {
+		return AbstractRace.buildRace(raceId);
 	}
 
-	@RequestMapping(value = "/results/{raceId}", method = RequestMethod.GET)
-	public List<RaceAthlete> getRace(@PathVariable("raceId") int raceId) {
-		return AbstractRace.buildRace(raceId).getResults();
+	@RequestMapping(value = "/results/{raceId}/scorers")
+	public List<RaceAthlete> getScorers(@PathVariable("raceId") int raceId) {
+		return AbstractRace.buildRace(raceId).getScorers();
 	}
+
 }

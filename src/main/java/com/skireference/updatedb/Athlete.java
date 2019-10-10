@@ -217,6 +217,7 @@ public class Athlete {
 	public Double[] getMakeUpAfterIncrease(int pointsList, int listsBack, String eventAcronym,
 	                                       AthleteUtils athleteUtils) {
 		ArrayList<BioResult> racesByDiscipline = this.racesByDiscipline(eventAcronym);
+		System.out.println("SIZE: " + racesByDiscipline.size());
 		ArrayList<Double> accuScores = new ArrayList<>();
 		for (int i = 0; i < racesByDiscipline.size(); i ++) {
 			int list = athleteUtils.getPointsList(racesByDiscipline.get(i).getDate());

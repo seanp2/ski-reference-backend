@@ -14,6 +14,7 @@ public class RaceAthlete {
 	private final int competitorID;
 	private final Result result;
 	private  double previousPoints;
+	private boolean scored;
 
 
 	public RaceAthlete(int competitorID, String lastfirstName,
@@ -24,6 +25,8 @@ public class RaceAthlete {
 		this.birthyear = birthyear;
 		this.nation = nation;
 		this.result = result;
+		this.scored = false;
+
 	}
 
 
@@ -44,6 +47,11 @@ public class RaceAthlete {
 		return competitorID;
 	}
 
+	public boolean getScored() {
+		return scored;
+	}
+
+
 	public String getLastfirstName() {
 		return lastfirstName;
 	}
@@ -61,4 +69,8 @@ public class RaceAthlete {
 		return this.birthyear + "";
 	}
 
+	public void setScored(boolean b) {
+		System.out.println("SET");
+		this.scored = b;
+	}
 }

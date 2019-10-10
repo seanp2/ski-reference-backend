@@ -62,11 +62,12 @@ public class AthleteUtils {
 //		Elements rows = fispages.select("#fis-points-list-body .g-lg-3 , :nth-child(6) " +
 //				".split-row__item:nth-child(1) " +
 //				":nth-child(2) a, #fis-points-list-body .g-lg-3");
-		Elements rows = fispages.select("#fis-points-list-body .g-lg-3, .split-row__item:nth-child(1) :nth-child(2) .link__text, #fis-points-list-body .g-lg-3");
+		Elements rows = fispages.select(":nth-child(6) :nth-child(1) :nth-child(2) :nth-child(6) :nth-child(1) :nth-child(2) , .justify-left:nth-child(6) .split-row__item:nth-child(1) :nth-child(2) .link__text, #fis-points-list-body .g-lg-3");
 		// index mod 3 = 0 of rows is a start date of a list
 		// index mod 3 = 1 of rows is an end date of a list
 		// index mod 3 = 2 of rows is the csv link for the list
 		String[] rowAccu = new String[2];
+
 		for (int i = 0; i < rows.size(); i++) {
 			if (i % 3 == 0 ) {
 				rowAccu[0] = rows.get(i).ownText();
@@ -76,7 +77,13 @@ public class AthleteUtils {
 			}
 			else if (i % 3 == 2) {
 				if (date.sameOrLaterThan(new Date(rowAccu[0], true)) && new Date(rowAccu[1], true).sameOrLaterThan(date)) {
-					String pointsListAsMalformedString = rows.get(i).attr("onclick").substring(42);
+					String pointsListAsMalformedString = null;
+					try {
+
+						 pointsListAsMalformedString = rows.get(i).parent().attr("onclick").substring(42);
+					} catch (StringIndexOutOfBoundsException e) {
+						continue;
+					}
 					return Integer.parseInt(pointsListAsMalformedString
 							.substring(0, pointsListAsMalformedString.length() - 2));
 				} else {

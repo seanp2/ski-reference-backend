@@ -7,11 +7,10 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import javax.servlet.RequestDispatcher;
 import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
-
+import java.util.List;
 
 
 public abstract class AbstractRace implements Race {
@@ -25,6 +24,10 @@ public abstract class AbstractRace implements Race {
 	private String event;
 	private String venue;
 	private ArrayList<RaceAthlete> dnfs;
+	private ArrayList<RaceAthlete> scorers;
+	private ArrayList<Double> prepoints;
+	private int pointsList;
+
 
 
 
@@ -40,15 +43,28 @@ public abstract class AbstractRace implements Race {
 		this.venue = page.select("div h1").first().ownText();
 		String dateAsText = page.select("time span").first().ownText();
 		this.date = Date.monthAsLetters(dateAsText);
-		System.out.println(this.date);
+		this.pointsList = new AthleteUtils().getPointsList(this.date);
 		this.competitorIDs = new ArrayList<>();
 		this.initCompetitorIDS();
 		this.names = this.getNames();
 		this.results = new ArrayList<>();
+		this.prepoints = this.getPreviousPoints();
 		this.initAthletes();
+		this.scorers = this.initScorers();
 		this.penalty = this.results.get(0).getResult().getScore();
+		this.setScorers();
+
+
 	}
 
+	@Override
+	public double getPenalty() {
+		return penalty;
+	}
+
+	public String getEvent() {
+		return this.event;
+	}
 
 	public static String getEventAcronym(String fullEventName) {
 		String eventNamewithoutGender;
@@ -56,13 +72,9 @@ public abstract class AbstractRace implements Race {
 			eventNamewithoutGender = fullEventName.substring(6);
 		} else if (fullEventName.substring(0,1).equals("L")) {
 			eventNamewithoutGender = fullEventName.substring(8);
-
 		} else {
 			eventNamewithoutGender = fullEventName;
 		}
-//		else {
-//			throw new IllegalArgumentException("Invalid event name");
-//		}
 		if (eventNamewithoutGender.equals("Slalom")) {
 			return "SL";
 		} else if (eventNamewithoutGender.equals("Giant Slalom")) {
@@ -100,10 +112,52 @@ public abstract class AbstractRace implements Race {
 		return race;
 	}
 
+//	@Override
+//	public ArrayList<RaceAthlete> getScorers() {
+//		ArrayList<RaceAthlete> racersWhoScored = new ArrayList<>();
+//		int pointsList = new AthleteUtils().getPointsList(this.date);
+//		Connection connection = new DBconnection().connect();
+//		ResultSet rs;
+//		for (int i = 0; i < this.competitorIDs.size(); i++) {
+//			try {
+//				String query = "SELECT " + this.event + "points FROM FIS_database.Ranking WHERE Listid = " + pointsList + "" +
+//						" AND CompetitorID =  " + competitorIDs.get(i) + ";";
+//				System.out.println(query);
+//				Statement stmt = connection.createStatement();
+//				stmt.execute(query);
+//				rs = stmt.getResultSet();
+//				while(rs.next()) {
+//					double points = Double.parseDouble(rs.getString(this.event + "points"));
+//					RaceAthlete curAthlete = this.results.get(i);
+//					if (points > curAthlete.getResult().getScore())  {
+//						racersWhoScored.add(curAthlete);
+//					}
+//				}
+//
+//			} catch(SQLException e){
+//					e.printStackTrace();
+//			}
+//		}
+//		return racersWhoScored;
+//	}
+
 	@Override
 	public ArrayList<RaceAthlete> getScorers() {
+		return this.scorers;
+	}
+
+	public ArrayList<Integer> getScoringIndices() {
+		ArrayList<Integer> indices = new ArrayList<>();
+		for (int i = 0; i < this.scorers.size(); i ++) {
+			indices.add(Integer.parseInt(this.scorers.get(i).getResult().getRank()) - 1);
+		}
+
+		return indices;
+	}
+
+	private ArrayList<RaceAthlete> initScorers() {
 		ArrayList<RaceAthlete> racersWhoScored = new ArrayList<>();
-		System.out.println(this.date);
+
 		int pointsList = new AthleteUtils().getPointsList(this.date);
 		Connection connection = new DBconnection().connect();
 		ResultSet rs;
@@ -165,8 +219,11 @@ public abstract class AbstractRace implements Race {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+		System.out.println(racersWhoScored.size());
 		return racersWhoScored;
 	}
+
+
 
 	/**
 	 * This method must be abstract because combined times have different
@@ -181,6 +238,15 @@ public abstract class AbstractRace implements Race {
 	                                                 ArrayList<String> differences,
 	                                                 ArrayList<String> resultScores);
 
+
+	private void setScorers() {
+		System.out.println("set scorers called");
+
+		for (int i = 0; i < this.scorers.size(); i ++) {
+			System.out.println(i);
+			this.scorers.get(i).setScored(true);
+		}
+	}
 
 	/**
 	 * Initializes the results of race.
@@ -203,6 +269,7 @@ public abstract class AbstractRace implements Race {
 			try {
 				RaceAthlete athlete = new RaceAthlete(Integer.parseInt(competitorIDs.get(i)), names.get(i),
 						Integer.parseInt(birthYears.get(i)), countries.get(i), athleteFinishes.get(i));
+				athlete.setPreviousPoints(this.prepoints.get(i));
 				this.results.add(athlete);
 				if (athleteFinishes.get(i) instanceof DNF) {
 					this.dnfs.add(results.get(i));
@@ -271,9 +338,6 @@ public abstract class AbstractRace implements Race {
 
 	@Override
 	public String getLowerCaseCountryInitials() {
-		System.out.println("COUNTRY INTITIALS: " + page.select("div h1").first().ownText()
-				.substring(page.select("div h1").first().ownText().indexOf("(") + 1,
-						page.select("div h1").first().ownText().length() - 1).toLowerCase());
 		String venueOnPage = page.select("div h1").first().ownText();
 		return venue.substring(venueOnPage.indexOf("(") + 1 , venueOnPage.length() - 1).toLowerCase();
 	}
@@ -358,6 +422,10 @@ public abstract class AbstractRace implements Race {
 		return bibs;
 	}
 
+	public List<RaceAthlete> getDnfs() {
+		return this.dnfs;
+	}
+
 	/**
 	 * Retrieves all of the countries that athletes are from
 	 * @return an array list of the countries the athletes are from ordered by
@@ -402,6 +470,33 @@ public abstract class AbstractRace implements Race {
 			fisPoints.add(fisPointsOnPage.get(i).ownText());
 		}
 		return fisPoints;
+	}
+
+	private ArrayList<Double> getPreviousPoints() {
+		ArrayList<Double> prevPoints = new ArrayList<>();
+		Connection dBconnection = new DBconnection().connect();
+		for(int i = 0; i < competitorIDs.size(); i ++) {
+			try {
+				String competitorID = competitorIDs.get(i);
+				String query = "SELECT " + this.event + "points FROM FIS_database.Ranking WHERE Listid = "
+						+ this.pointsList  + " AND competitorID = " + competitorID;
+				Statement statement = dBconnection.createStatement();
+				ResultSet rs = statement.executeQuery(query);
+				while (rs.next()) {
+					String stringPoints = rs.getString(this.event + "points");
+					try {
+						prevPoints.add(Double.parseDouble(stringPoints));
+					} catch (NumberFormatException n) {
+						prevPoints.add(990.0);
+
+					}
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+				prevPoints.add(990.0);
+			}
+		}
+		return prevPoints;
 	}
 
 	private ArrayList<String> getDifferences() {

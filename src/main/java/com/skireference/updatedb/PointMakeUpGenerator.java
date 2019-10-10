@@ -14,11 +14,11 @@ import java.util.HashMap;
  * The main method of this class is used to update the database.
  */
 public class PointMakeUpGenerator {
-	private static int startList = 284;
-	private static int endList = 284;
+	private static int startList = 285;
+	private static int endList = 285;
 	private static String[] pointsNames = new String[]{"SL", "GS" , "SG" , "DH"};
-	private static int listsBackForIncrease = 13;
-	private static int startAtAthleteIndex = 11900;
+	private static int listsBackForIncrease = 19;
+	private static int startAtAthleteIndex = 0;
 
 
 	/**
@@ -49,7 +49,8 @@ public class PointMakeUpGenerator {
 			System.out.println(query);
 			try {
 				stmt = dBconnection.createStatement();
-				rs = stmt.executeQuery(query);
+				stmt.execute(query);
+				rs = stmt.getResultSet();
 				int j = 0;
 				System.out.println("HI");
 				while (rs.next()) {
@@ -138,10 +139,12 @@ public class PointMakeUpGenerator {
 							}
 							for (int eventCode = 0; eventCode < curPoints.size(); eventCode++) {
 								if (curPoints.get(eventCode) < prevPoints.get(eventCode)) {
+									System.out.println("POINTS DECREASED");
 									Double[] sup = athlete.getPointsMadeWith(pointsList, listsBack,
 											prevMakeUp.get(eventCode), pointsNames[eventCode], athleteUtils);
 									hiLoPoints.add(sup);
 								} else if (curPoints.get(eventCode) > prevPoints.get(eventCode)) {
+									System.out.println("POINTS INCREASED");
 									Double[] makeup = athlete.getMakeUpAfterIncrease(pointsList, listsBackForIncrease,
 											pointsNames[eventCode], athleteUtils);
 									System.out.println("HIGH: " + makeup[0]);

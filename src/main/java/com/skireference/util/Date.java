@@ -103,15 +103,15 @@ public class Date {
 		return this.year * this.day / this.month;
 	}
 
-	private int getDay() {
+	public int getDay() {
 		return day;
 	}
 
-	private int getMonth() {
+	public int getMonth() {
 		return month;
 	}
 
-	private int getYear() {
+	public int getYear() {
 		return year;
 	}
 
