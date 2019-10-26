@@ -67,6 +67,10 @@ public class BioResult {
 		return venue;
 	}
 
+	public String getRank() {
+		return this.rank;
+	}
+
 	public String getCSVRankAndScore() {
 		return this.rank + "," + this.score + ",";
 	}
