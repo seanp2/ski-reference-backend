@@ -70,7 +70,7 @@ public abstract class AbstractRace implements Race {
 		String eventNamewithoutGender;
 		if (fullEventName.substring(0,1).equals("M")) {
 			eventNamewithoutGender = fullEventName.substring(6);
-		} else if (fullEventName.substring(0,1).equals("L")) {
+		} else if (fullEventName.substring(0,1).equals("W") || fullEventName.substring(0,1).equals("L")) {
 			eventNamewithoutGender = fullEventName.substring(8);
 		} else {
 			eventNamewithoutGender = fullEventName;
@@ -85,7 +85,7 @@ public abstract class AbstractRace implements Race {
 			return "DH";
 		}
 		else {
-			throw new IllegalArgumentException("Invalid event name");
+			throw new IllegalArgumentException("Invalid event name: " + eventNamewithoutGender);
 		}
 	}
 
