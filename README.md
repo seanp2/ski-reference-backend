@@ -9,7 +9,7 @@ The deprecated repository can be found [here](https://github.com/seanp2/ski-refe
 ## GET /results/:raceId
 ### Request
 ```
-curl http://localhost:5000/results/87408
+curl http://api.ski-reference.com/results/87408
 ```
 ### Response
 ```
@@ -44,7 +44,7 @@ curl http://localhost:5000/results/87408
 
 ## GET /comparison/:fisIdsCSV
 ### Request
-```curl http://localhost:5000/comparison/6532409,6532450```
+```curl http://api.ski-reference.com/comparison/6532409,6532450```
 
 ```
 {
