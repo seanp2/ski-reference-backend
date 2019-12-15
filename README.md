@@ -4,6 +4,8 @@ This is the updated backend repository of [ski-reference.com](http://ski-referen
 
 The deprecated repository can be found [here](https://github.com/seanp2/ski-reference)
 
+There is a maintained instance hosted on AWS available at http://api.ski-reference.com
+
 
 
 ## GET /results/:raceId
