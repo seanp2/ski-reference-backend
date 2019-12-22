@@ -22,7 +22,7 @@ public class DBconnection {
 	FileInputStream input;
 	Properties properties;
 	private String DATABASE_DRIVER = "com.mysql.jdbc.Driver";;
-	private String DATABASE_URL = "jdbc:mysql://fispoints.cmqzttoyzcdi.us-east-2.rds.amazonaws.com:" +
+	private String DATABASE_URL = "jdbc:mysql://ski-reference.cmqzttoyzcdi.us-east-2.rds.amazonaws.com:" +
 			"3306/FIS_database?useUnicode=true&useJDBCCompliant" +
 			"TimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC&allowMultiQueries=true";
 	private static final String MAX_POOL = "250"; // set your own limit
