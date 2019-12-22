@@ -267,8 +267,12 @@ public abstract class AbstractRace implements Race {
 		ArrayList<Result> athleteFinishes = this.initResults(bibs, diffTimes, fisPoints);
 		for (int i = 0; i < athleteFinishes.size(); i++) {
 			try {
+				int countryIndexOffset = 0;
+				if (countries.size() > competitorIDs.size()) {
+					countryIndexOffset = 1;
+				}
 				RaceAthlete athlete = new RaceAthlete(Integer.parseInt(competitorIDs.get(i)), names.get(i),
-						Integer.parseInt(birthYears.get(i)), countries.get(i), athleteFinishes.get(i));
+						Integer.parseInt(birthYears.get(i)), countries.get(i + countryIndexOffset), athleteFinishes.get(i));
 				athlete.setPreviousPoints(this.prepoints.get(i));
 				this.results.add(athlete);
 				if (athleteFinishes.get(i) instanceof DNF) {
