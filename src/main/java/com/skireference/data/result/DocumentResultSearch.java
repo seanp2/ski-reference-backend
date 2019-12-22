@@ -5,7 +5,6 @@ import com.skireference.updatedb.DBconnection;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.concurrent.ConcurrentNavigableMap;
 
 public class DocumentResultSearch implements DocumentSearch {
 	private int raceId;
@@ -20,7 +19,6 @@ public class DocumentResultSearch implements DocumentSearch {
 		try {
 			String createRecord = "INSERT INTO FIS_database.result_search (race_id, ip_address, `date`) " +
 					"VALUES (" + this.raceId + ",\"" + this.ip + "\", NOW());";
-			System.out.println(createRecord);
 			Connection connection = new DBconnection().connect();
 			Statement statement = connection.createStatement();
 			statement.executeUpdate(createRecord);
