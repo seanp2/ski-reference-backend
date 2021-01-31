@@ -4,6 +4,10 @@ import com.skireference.data.result.DocumentResultSearch;
 import com.skireference.data.result.DocumentSearch;
 import com.skireference.data.vistor.CusomizeableVisitorIncrementer;
 import com.skireference.model.comparison.Comparison;
+import com.skireference.model.live.ListingFetcher;
+import com.skireference.model.live.LiveRaceListing;
+import com.skireference.model.live.LiveRaceResult;
+import com.skireference.model.live.LiveResultRow;
 import com.skireference.model.results.AbstractRace;
 import com.skireference.model.results.Race;
 import com.skireference.model.results.RaceAthlete;
@@ -13,6 +17,7 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,11 +39,33 @@ public class Controller {
 		return AbstractRace.buildRace(raceId).getScorers();
 	}
 
+	@RequestMapping(value = "/live/listings",  method = RequestMethod.GET)
+	public List<LiveRaceListing> getLiveListings() {
+		try {
+			return new ListingFetcher().getListings();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		return new ArrayList<>();
+	}
+
+	@RequestMapping(value = "/live/results/{raceId}",  method = RequestMethod.GET)
+	public List<LiveResultRow> getLiveResults(@PathVariable("raceId") int raceId) {
+		try {
+			return new LiveRaceResult(raceId).getResultRows();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		return new ArrayList<>();
+	}
+
+
 
 	@RequestMapping(value = "/comparison/{athleteIds}", method = RequestMethod.GET)
 	public Comparison getComparison(@PathVariable("athleteIds") String[] athleteIds) {
 		ArrayList<Integer> fisIds = new ArrayList<>();
-		System.out.println(athleteIds);
 		for (int i = 0; i < athleteIds.length; i ++) {
 			try {
 				System.out.println(athleteIds[i]);
