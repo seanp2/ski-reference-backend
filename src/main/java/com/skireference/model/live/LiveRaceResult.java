@@ -3,6 +3,7 @@ package com.skireference.model.live;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.io.IOException;
@@ -34,17 +35,24 @@ public class LiveRaceResult {
 	}
 
 	private List<LiveResultRow> initResultRows() throws IOException {
-		System.setProperty("webdriver.chrome.driver", "/Users/seanpomerantz/WebDriver/bin/chromedriver");
-		WebDriver chromeDriver = new ChromeDriver();
-		WebDriverWait wait = new WebDriverWait(chromeDriver, 15);
-		chromeDriver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+		System.setProperty("webdriver.chrome.driver", "/usr/bin/chromedriver");
+		ChromeOptions options = new ChromeOptions();
+		options.addArguments("start-maximized"); // open Browser in maximized mode
+		options.addArguments("disable-infobars"); // disabling infobars
+		options.addArguments("--remote-debugging-port=9222");
+		options.addArguments("--disable-extensions"); // disabling extensions
+		options.addArguments("--disable-gpu"); // applicable to windows os only
+		options.addArguments("--disable-dev-shm-usage"); // overcome limited resource problems
+		options.addArguments("--headless"); // Bypass OS security model
+		WebDriver chromeDriver = new ChromeDriver(options);
+		chromeDriver.manage().timeouts().implicitlyWait(4, TimeUnit.SECONDS);
 		try {
 			chromeDriver.get(getRaceLink());
-			List<String> bibs = wait.until(driver -> driver.findElements(By.cssSelector(BIB_SELECTOR))).stream().map(n -> n.getText()).collect(Collectors.toList());
-			List<String> ranks = wait.until(driver -> driver.findElements(By.cssSelector(RANK_SELECTOR))).stream().map(n -> n.getText()).collect(Collectors.toList());
-			List<String> names = wait.until(driver -> driver.findElements(By.cssSelector(NAME_SELECTOR))).stream().map(n -> n.getText()).collect(Collectors.toList());
-			List<String> times = wait.until(driver -> driver.findElements(By.cssSelector(TIME_SELECTOR))).stream().map(n -> n.getText()).collect(Collectors.toList());
-			List<String> diffs = wait.until(driver -> driver.findElements(By.cssSelector(DIFF_SELECTOR))).stream().map(n -> n.getText()).collect(Collectors.toList());
+			List<String> bibs = chromeDriver.findElements(By.cssSelector(BIB_SELECTOR)).stream().map(n -> n.getText()).collect(Collectors.toList());
+			List<String> ranks = chromeDriver.findElements(By.cssSelector(RANK_SELECTOR)).stream().map(n -> n.getText()).collect(Collectors.toList());
+			List<String> names = chromeDriver.findElements(By.cssSelector(NAME_SELECTOR)).stream().map(n -> n.getText()).collect(Collectors.toList());
+			List<String> times = chromeDriver.findElements(By.cssSelector(TIME_SELECTOR)).stream().map(n -> n.getText()).collect(Collectors.toList());
+			List<String> diffs = chromeDriver.findElements(By.cssSelector(DIFF_SELECTOR)).stream().map(n -> n.getText()).collect(Collectors.toList());
 			List<LiveResultRow> results = new ArrayList<>();
 			for (int i = 0; i < times.size(); i++) {
 				LiveResultRow row = new LiveResultRow(ranks.get(i), bibs.get(i), names.get(i), times.get(i), diffs.get(i), 0);
